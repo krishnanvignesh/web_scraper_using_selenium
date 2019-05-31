@@ -7,7 +7,6 @@ import petl as etl
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
-
 current_path = os.getcwd()
 DOWNLOAD_DIR = os.path.join(current_path, 'downloads')
 URL = "http://www.agriculture.gov.au/pests-diseases-weeds/plant#identify-pests-diseases"
@@ -50,6 +49,11 @@ class PageDownloader:
         return values
 
 
+def page_already_exist(filename):
+    exists = os.path.exists(os.path.join(DOWNLOAD_DIR, filename))
+    return exists
+
+
 for row in table.findAll('li', attrs={'class': 'flex-item'}):
     pest = {}
     url = row.a['href']
@@ -64,12 +68,12 @@ for row in table.findAll('li', attrs={'class': 'flex-item'}):
 extracted_data = etl.fromdicts(pests_list, header=['url', 'img', 'title'])
 
 for url in extracted_data['url']:
-    downloader = PageDownloader(site_url=url)
-    html = downloader.get_raw_html()
-    path = os.path.join(DOWNLOAD_DIR, f"{url.split('/')[-1]}")
-    with open(path, 'w') as f:
-        f.write(html)
-
-
+    name = url.split('/')[-1]
+    if not page_already_exist(name):
+        downloader = PageDownloader(site_url=url)
+        html = downloader.get_raw_html()
+        path = os.path.join(DOWNLOAD_DIR, f"{name}")
+        with open(path, 'w') as f:
+            f.write(html)
 
 # etl.tocsv(extracted_data, 'new.csv', encoding='utf-8')
