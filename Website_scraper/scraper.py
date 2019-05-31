@@ -1,3 +1,4 @@
+import os
 import time
 from urllib.parse import urlparse
 import requests
@@ -6,9 +7,14 @@ import petl as etl
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
+
+current_path = os.getcwd()
+DOWNLOAD_DIR = os.path.join(current_path, 'downloads')
 URL = "http://www.agriculture.gov.au/pests-diseases-weeds/plant#identify-pests-diseases"
 
-hostname = urlparse(URL).hostname
+parsed_uri = urlparse(URL)
+hostname = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+
 response = requests.get(URL)
 soup = BeautifulSoup(response.content, 'html5lib')
 
@@ -29,12 +35,15 @@ class PageDownloader:
         except:
             driver = webdriver.Chrome(chrome_options=chrome_options,
                                       executable_path='/usr/bin/chromedriver')
-        driver.get(self.download_page_url)
+        print(self.download_page_url)
+        driver.get(url=self.download_page_url)
         try:
-            [driver.find_element_by_class_name('image-gallery-right-nav').click() for _ in range(10)]  # check 10 images
+            for num in range(3):
+                driver.find_element_by_id('collapsible-trigger-link-' + str(num)).click()
+                time.sleep(0.5)
         except NoSuchElementException:
             pass
-        time.sleep(0.5)
+        # time.sleep(0.5)
         values = driver.page_source
         driver.close()
         driver.quit()
@@ -56,8 +65,11 @@ extracted_data = etl.fromdicts(pests_list, header=['url', 'img', 'title'])
 
 for url in extracted_data['url']:
     downloader = PageDownloader(site_url=url)
-    response = downloader.get_raw_html()
+    html = downloader.get_raw_html()
+    path = os.path.join(DOWNLOAD_DIR, f"{url.split('/')[-1]}")
+    with open(path, 'w') as f:
+        f.write(html)
 
 
 
-etl.tocsv(extracted_data, 'new.csv', encoding='utf-8')
+# etl.tocsv(extracted_data, 'new.csv', encoding='utf-8')
