@@ -11,7 +11,7 @@ DOWNLOAD_DIR = os.path.join(CURRENT_PATH, 'downloads')
 
 
 def get_pest_sheet():
-    table = etl.fromcsv('new.csv')
+    table = etl.fromcsv('initial_pest.csv')
     return table
 
 
@@ -63,7 +63,7 @@ def main():
     table_pests = etl.addcolumn(table=table_pests, field='Check what can legally come into Australia', col=legal)
     table_pests = etl.addcolumn(table=table_pests, field='Secure any suspect specimens', col=suspect)
 
-    etl.tocsv(table_pests, os.path.join(os.getcwd(), 'final.csv'))
+    etl.tocsv(table_pests, os.path.join(os.getcwd(), 'final_pest.csv'))
 
 
 if __name__ == '__main__':

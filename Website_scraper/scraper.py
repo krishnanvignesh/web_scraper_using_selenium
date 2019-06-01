@@ -77,7 +77,4 @@ for url in extracted_data['url']:
         with open(path, 'w', encoding='utf-8') as f:
             f.write(html)
 
-
-
-
-etl.tocsv(extracted_data, 'new.csv', encoding='utf-8')
+etl.tocsv(extracted_data, 'initial_pest.csv', encoding='utf-8')
