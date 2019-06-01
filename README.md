@@ -9,4 +9,12 @@ run this file parse all the downloaded html and extract content to final_pest.cs
 
 
 Note:
-You need to have chrome version 74 installed as the web driver installed needs version 74 of chrome 
+1) You need to have chrome version 74 installed as the web driver installed needs version 74 of chrome
+
+2) this code will work on windows only
+
+
+
+Result:
+
+Excel - final_pest.csv
