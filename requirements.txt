@@ -1,5 +1,5 @@
 beautifulsoup4==4.7.1
 requests==2.22.0
 html5lib==1.0.1
-petl==1.2.0
+petl==1.6.8
 selenium==3.141.0
